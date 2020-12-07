@@ -4,7 +4,7 @@ Use of this source code is governed by an MIT-style license that can be
 found in the LICENSE.txt file.
 */
 
-function requestWebGLVideoFrameHandler(canvas) {
+function requestWebGLVideoFrameHandler(canvas, stats) {
     let gl = canvas.getContext('webgl');
     if (!gl) {
         console.log("<h1>Unable to initialize WebGL. Your browser or machine may not support it.</h1>");
@@ -287,6 +287,9 @@ function requestWebGLVideoFrameHandler(canvas) {
             console.log(error.message);
             return;
         }
+        if (stats) {
+            stats.begin();
+        }
         const samplerName = "aSampler";
         prepareProgram(gl, frame, videoFrameHandle, samplerName);
         bindVideoFrame(gl, program, videoFrameHandle, gl.TEXTURE0, samplerName);
@@ -303,6 +306,9 @@ function requestWebGLVideoFrameHandler(canvas) {
         setTimeout(renderFrame, 0);
         ext.releaseVideoFrame(videoFrameHandle);
         frame.destroy();
+        if (stats) {
+            stats.end();
+        }
     }
 
     function handleFrame(frame) {
